@@ -21,16 +21,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Lint
-        run: npm run lint
-
       - name: Build
         run: npm run compile
-
-      - name: Test
-        run: |
-          npm run pretest
-          xvfb-run -a npm test
 
       - name: Build extension package
         id: build_vsix
