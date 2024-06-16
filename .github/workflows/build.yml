@@ -1,0 +1,46 @@
+name: build
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run compile
+
+      - name: Test on ubuntu-latest
+        if: matrix.os != 'windows-latest'
+        run: |
+          npm run pretest
+          xvfb-run -a npm test
+
+      - name: Test on windows-latest
+        if: matrix.os == 'windows-latest'
+        run: |
+          npm run pretest
+          npm test
